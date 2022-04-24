@@ -184,7 +184,7 @@ const LineupDetails = (props) => {
       calculatePlayerBenchInnings(player);
       calculatePlayerOutfieldInnings(player);
       calculatePlayerRestrictedInnings(player);
-      calculateOutfieldMet(player);
+      calculateInfieldMet(player);
 
       lineup.playing[playerIndex] = { ...player };
       lineup.inningValidations[index] = { msg: validateInning(inningNumber), tooMany: checkInningForDups(inningNumber) };
@@ -287,6 +287,7 @@ const LineupDetails = (props) => {
     }
     for (let i = 0; i < numPlayers; i++) {
       const player = lineup.playing[i];
+      calculateInfieldMet(player);
       const numInnings = player.innings.length;
       for (let j = 0; j < numInnings; j++) {
         if (player.innings[j].inning === inning) {
@@ -322,7 +323,7 @@ const LineupDetails = (props) => {
     return msg;
   };
 
-  const calculateOutfieldMet = (player) => {
+  const calculateInfieldMet = (player) => {
     const positions = player.innings;
     const numPlayers = lineup.playing.length;
     const numPositions = positions.length;
@@ -332,12 +333,12 @@ const LineupDetails = (props) => {
     }
     let good = false;
     for (let i = 0; i < numPositions; i++) {
-      if (parseInt(positions[i].inning) <= minInning && positions[i].number > 6) {
+      if (parseInt(positions[i].inning) < minInning && positions[i].number > 0 && positions[i].number < 7) {
         good = true;
         break;
       }
     }
-    player.outfieldMet = good ? 'yes' : 'no';
+    player.infieldMet = good ? 'yes' : 'no';
   };
 
   const calculatePlayerBenchInnings = (player) => {
@@ -660,22 +661,17 @@ const LineupDetails = (props) => {
                         )}
                         {!isPrinting && (
                           <TableCell size="small" className="no-print">
+                            Infield Met
+                          </TableCell>
+                        )}
+                        {!isPrinting && (
+                          <TableCell size="small" className="no-print">
                             # Outfield
                           </TableCell>
                         )}
                         {!isPrinting && (
                           <TableCell size="small" className="no-print">
-                            Outfield Met
-                          </TableCell>
-                        )}
-                        {!isPrinting && (
-                          <TableCell size="small" className="no-print">
                             # Bench
-                          </TableCell>
-                        )}
-                        {!isPrinting && (
-                          <TableCell size="small" className="no-print">
-                            # Prime
                           </TableCell>
                         )}
                         {!isPrinting && <TableCell size="small" className="no-print"></TableCell>}
@@ -758,22 +754,17 @@ const LineupDetails = (props) => {
                                       ))}
                                       {!isPrinting && (
                                         <TableCell size="small" className="no-print" style={{ color: row.textColor }}>
+                                          {row.infieldMet}
+                                        </TableCell>
+                                      )}
+                                      {!isPrinting && (
+                                        <TableCell size="small" className="no-print" style={{ color: row.textColor }}>
                                           {row.numOutfield}
                                         </TableCell>
                                       )}
                                       {!isPrinting && (
                                         <TableCell size="small" className="no-print" style={{ color: row.textColor }}>
-                                          {row.outfieldMet}
-                                        </TableCell>
-                                      )}
-                                      {!isPrinting && (
-                                        <TableCell size="small" className="no-print" style={{ color: row.textColor }}>
                                           {row.numBench}
-                                        </TableCell>
-                                      )}
-                                      {!isPrinting && (
-                                        <TableCell size="small" className="no-print" style={{ color: row.textColor }}>
-                                          {row.restrictedPositions}
                                         </TableCell>
                                       )}
                                       {!isPrinting && (

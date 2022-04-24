@@ -263,7 +263,11 @@ const Stats = (props) => {
           for (let k = 0; k < innings.length; k++) {
             if (k < numInningsFinished) {
               const inning = innings[k];
-              const positionAbbr = inning.abbr;
+              let positionAbbr = inning.abbr;
+              if (positionAbbr === '-') {
+                positionAbbr = 'BN';
+              }
+
               let count = 0;
               if (fs[positionAbbr]) {
                 count = fs[positionAbbr];
